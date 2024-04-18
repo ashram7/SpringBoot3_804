@@ -1,0 +1,1 @@
+SELECT id, author FROM test;
