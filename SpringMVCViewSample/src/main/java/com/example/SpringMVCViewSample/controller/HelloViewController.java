@@ -18,3 +18,4 @@ public class HelloViewController {
     }
 }
 //문제) http://localhost:8080/hello/view2를 입력하면 morning가 출력되게 만들어 보세요.
+//문제) http://localhost:8080/hello/view3 또는 view를 입력하면 Hello View!!!가 출력되게 만들어 보세요.
