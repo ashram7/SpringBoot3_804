@@ -6,9 +6,12 @@ import com.example.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/test")
@@ -32,5 +35,75 @@ public class TestController {
         model.addAttribute("title", "등록 폼");
 
         return "crud";
+    }
+
+    @PostMapping("/insert")
+    public String insert(@Validated TestForm testForm, BindingResult bindingResult,
+                         Model model, RedirectAttributes redirectAttributes){
+        Test test = new Test();
+        test.setQuestion(testForm.getQuestion());
+        test.setAnswer(testForm.getAnswer());
+        test.setAuthor(testForm.getAuthor());
+
+        if (!bindingResult.hasErrors()) {
+            service.insertTest(test);
+            redirectAttributes.addFlashAttribute("complete", "등록이 완료되었습니다");
+            return "redirect:/test";
+        }else {
+            return showList(testForm, model);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public String showUpdate(TestForm testForm, @PathVariable Integer id, Model model){
+        Optional<Test> testOpt = service.selectOneById(id);
+        Optional<TestForm> testFormOpt = testOpt.map(t -> makeTestForm(t));
+        if(testFormOpt.isPresent()) {
+            testForm = testFormOpt.get();
+        }
+        makeUpdateModel(testForm, model);
+        return "crud";
+    }
+
+    private void makeUpdateModel(TestForm testForm, Model model){
+        model.addAttribute("id", testForm.getId());
+        testForm.setNewTest(false);
+        model.addAttribute("testForm", testForm);
+        model.addAttribute("title", "변경 폼");
+    }
+
+    @PostMapping("/update")
+    public String update(@Validated TestForm testForm,
+                         BindingResult result,
+                         Model model,
+                         RedirectAttributes redirectAttributes){
+        Test test = makeTest(testForm);
+        if (!result.hasErrors()) {
+            service.updateTest(test);
+            redirectAttributes.addFlashAttribute("complete", "변경이 완료되었습니다");
+            return "redirect:/test/" + test.getId();
+        } else {
+            makeUpdateModel(testForm, model);
+            return "crud";
+        }
+    }
+
+    private Test makeTest(TestForm testForm) {
+        Test test = new Test();
+        test.setId(testForm.getId());
+        test.setQuestion(testForm.getQuestion());
+        test.setAnswer(testForm.getAnswer());
+        test.setAuthor(testForm.getAuthor());
+        return test;
+    }
+
+    private TestForm makeTestForm(Test test) {
+        TestForm form = new TestForm();
+        form.setId(test.getId());
+        form.setQuestion(test.getQuestion());
+        form.setAnswer(test.getAnswer());
+        form.setAuthor(test.getAuthor());
+        form.setNewTest(false);
+        return form;
     }
 }
