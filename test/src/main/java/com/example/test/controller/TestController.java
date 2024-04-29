@@ -106,4 +106,14 @@ public class TestController {
         form.setNewTest(false);
         return form;
     }
+
+    @PostMapping("/delete")
+    public String delete(
+            @RequestParam("id") String id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        service.deleteTestById(Integer.parseInt(id));
+        redirectAttributes.addFlashAttribute("delcomplete", "삭제 완료했습니다");
+        return "redirect:/test";
+    }
 }
