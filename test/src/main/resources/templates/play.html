@@ -9,7 +9,7 @@
 <h3>퀴즈</h3>
 <th:block th:if="${msg}">
   <p th:text="${msg}" style="color:red"></p>
-  <a th:href="@{/test}">CRUD 화면에 돌아가기</a> 
+  <a th:href="@{/test}">CRUD 화면에 돌아가기</a>
 </th:block>
 <th:block th:unless="${msg}">
   <p th:text="${testForm.question}">퀴즈 내용</p>

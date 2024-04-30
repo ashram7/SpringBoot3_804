@@ -116,4 +116,31 @@ public class TestController {
         redirectAttributes.addFlashAttribute("delcomplete", "삭제 완료했습니다");
         return "redirect:/test";
     }
+
+    @GetMapping("/play")
+    public String showTest(TestForm testForm, Model model) {
+        Optional<Test> testOpt = service.selectOneRandomTest();
+
+        if(testOpt.isPresent()) {
+            Optional<TestForm> testFormOpt = testOpt.map(t -> makeTestForm(t));
+            testForm = testFormOpt.get();
+        } else {
+            model.addAttribute("msg", "등록된 문제가 없습니다");
+            return "play";
+        }
+
+        model.addAttribute("testForm", testForm);
+
+        return "play";
+    }
+
+    @PostMapping("/check")
+    public String checkTest(TestForm testForm, @RequestParam Boolean answer, Model model){
+        if (service.checkTest(testForm.getId(), answer)) {
+            model.addAttribute("msg","정답입니다.");
+        } else {
+            model.addAttribute("msg","오답입니다.");
+        }
+        return "answer";
+    }
 }
