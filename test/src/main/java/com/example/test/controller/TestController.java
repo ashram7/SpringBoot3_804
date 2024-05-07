@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
@@ -44,6 +45,8 @@ public class TestController {
         test.setQuestion(testForm.getQuestion());
         test.setAnswer(testForm.getAnswer());
         test.setAuthor(testForm.getAuthor());
+        LocalDate localDate = LocalDate.now();
+        test.setDate(localDate);
 
         if (!bindingResult.hasErrors()) {
             service.insertTest(test);
