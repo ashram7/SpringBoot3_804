@@ -29,7 +29,10 @@ public class SecurityConfig {
                 //로그 아웃 URL을 설정
                 .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
                 .logoutSuccessUrl("/") //로그아웃 성공 시 이동할 URL을 설정
-        );
+        )
+
+
+        ;
         return http.build();
     }
     @Bean
